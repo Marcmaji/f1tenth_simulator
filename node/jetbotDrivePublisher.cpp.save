@@ -8,6 +8,7 @@ class jetbotDriveCmd
 private:
     ros::NodeHandle n;
 
+
     ros::Subscriber key_sub;
 
     ros::Publisher diff_drive_pub;
@@ -15,13 +16,6 @@ private:
     double prev_key_velocity = 0.0;
     double keyboard_max_speed = 1.0;
     double rotationWheelSpeedScale;
-    double yawVel;
-    double speedInc;
-    double maxSpeed;
-    double leftWheelSpeed;
-    double rightWheelSpeed;    
-    double radius = 1.0;
-    bool mode = false; // false = mode 1 true = mode2
 
 public:
     jetbotDriveCmd()
@@ -32,9 +26,7 @@ public:
 	    n.getParam("diff_drive_topic", diff_drive_topic);
         n.getParam("keyboard_topic", key_topic);
         n.getParam("jetbot_rotation_wheel_speed_scale", rotationWheelSpeedScale);
-        n.getParam("yaw_vel", yawVel);
-        n.getParam("speedInc", speedInc);
-        n.getParam("jetbot_max_wheel_speed", maxSpeed);
+
 
         diff_drive_pub = n.advertise<std_msgs::Float64MultiArray>(diff_drive_topic, 10);
 
@@ -53,71 +45,30 @@ public:
     }
 
     void key_callback(const std_msgs::String & msg){
-        double track = 0.2;
+        double leftWheelSpeed;
+        double rightWheelSpeed;
 
         bool publish = true;
 
         if (msg.data == "w"){
-            if (!mode){
-                leftWheelSpeed = 1.0;
-                rightWheelSpeed = 1.0;
-            }
-            else{
-                if(leftWheelSpeed <= maxSpeed){
-                    leftWheelSpeed += speedInc;
-                    rightWheelSpeed += speedInc;
-                }                
-            }
-            
+            leftWheelSpeed = 1.0;
+            rightWheelSpeed = 1.0;
+
+        
         }else if(msg.data=="s"){
-           if (!mode){
-                leftWheelSpeed = -1.0;
-                rightWheelSpeed = -1.0;
-            }
-            else{
-                if(leftWheelSpeed >= -maxSpeed){
-                    leftWheelSpeed -= speedInc;
-                    rightWheelSpeed -= speedInc;
-                }                
-            }
+            leftWheelSpeed = -1.0;
+            rightWheelSpeed = -1.0;
 
         }else if(msg.data == "a"){
             leftWheelSpeed = -1.0*rotationWheelSpeedScale;
             rightWheelSpeed = 1.0*rotationWheelSpeedScale;
-       
-	    }else if(msg.data == "d") {
+
+        }else if(msg.data == "d") {
             leftWheelSpeed = 1.0*rotationWheelSpeedScale;
             rightWheelSpeed = -1.0*rotationWheelSpeedScale;
-
-        }else if(msg.data=="t"){
-            leftWheelSpeed = (yawVel)*radius*rotationWheelSpeedScale;
-            rightWheelSpeed = (yawVel)*(radius+track)*rotationWheelSpeedScale;
-        
-        }else if(msg.data=="i"){
-            radius = radius+0.1;
-            leftWheelSpeed = 0.0;
-            rightWheelSpeed = 0.0;
-            if (radius>=0 && yawVel<=0){
-                yawVel = -yawVel;
-            }
-        
-        }else if(msg.data=="r"){
-            radius = radius-0.1;
-            leftWheelSpeed = 0.0;
-            rightWheelSpeed = 0.0;
-            if(radius<0 && yawVel>0){
-                yawVel = -yawVel;
-            }
-        
-        }else if(msg.data=="m"){
-            mode ^= true;
-            leftWheelSpeed = 0.0;
-            rightWheelSpeed = 0.0;
-        
         }else if (msg.data ==" "){
             leftWheelSpeed = 0.0;
             rightWheelSpeed = 0.0;
-        
         }else {
             publish = false;
         }
