@@ -46,9 +46,9 @@ public:
     void publish_to_diff_drive(double rightWheelTrq,double leftWheelTrq)
     {
         std_msgs::Float64MultiArray diffDriveMsg;
-	diffDriveMsg.data.clear();
-	diffDriveMsg.data.push_back(rightWheelTrq);
-	diffDriveMsg.data.push_back(leftWheelTrq);
+	    diffDriveMsg.data.clear();
+	    diffDriveMsg.data.push_back(rightWheelTrq);
+	    diffDriveMsg.data.push_back(leftWheelTrq);
         diff_drive_pub.publish(diffDriveMsg);
     }
 
