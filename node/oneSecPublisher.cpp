@@ -31,17 +31,18 @@ int main(int argc, char **argv){
 
     ros::spinOnce();
 
-    loop_rate.sleep();
-
     std::stringstream ss;
     ss << "Keys Pressed/s: " << keyPresses << " Last Key Pressed: " << lastKey;
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
-    /*ROS_INFO("%i", keyPresses);*/
 
     oSI_pub.publish(msg);
+
+    loop_rate.sleep();
+
     keyPresses = 0;
+    lastKey = ' ';
   }
 
     return 0;
