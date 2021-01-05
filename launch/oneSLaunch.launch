@@ -1,0 +1,12 @@
+<launch>
+
+  <!-- Launch the Keyboard Node -->
+  <node pkg="f1tenth_simulator" name="keyboard" type="keyboard" output="screen">
+    <rosparam command="load" file="$(find f1tenth_simulator)/params.yaml"/>
+  </node>
+
+ <node pkg="f1tenth_simulator" name="oneSecInfo" type="oneSecPublisher" output="screen">
+    <rosparam command="load" file="$(find f1tenth_simulator)/params.yaml"/>
+  </node>
+
+</launch>
